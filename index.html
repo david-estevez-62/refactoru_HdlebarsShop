@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Untitled</title>
+    <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css">
+    <style type="text/css">
+      .shopItem {
+        margin: 20px;
+        float: left;
+      }
+
+      p {
+        margin: 0px;
+      }
+
+      [type="button"] {
+        background: none;
+        outline: none;
+        border: none;
+        color: blue;
+      }
+
+      hr {
+        width: 100%
+      }
+    </style>
+  </head>
+  <body>
+    <div id="product-container"></div>
+    <hr>
+    <ul id="wishlist"></ul>
+
+
+    <script id="estore-template" type="text/x-handlebars-template">
+          <div class="shopItem">
+            <h2> {{title}} </h2>
+            <img src="{{image}}" />
+            {{#each details}}
+              <p>{{this}}</p>
+            {{/each}}
+
+            {{#if sale}}
+                <p><s>{{cost}}</s></p>
+                <p>{{sale}}</p>
+            {{else}}
+                <p>{{cost}}</p>
+            {{/if}}
+            <input type="button" value="add to wishlist" class="addProdBtn" />
+          </div>
+    </script>
+    <script id="wishlist-template" type="text/x-handlebars-template">
+          <div class="wishlistItem">
+            <h2> {{title}} </h2>
+            <input type="button" value="Remove" class="remProdBtn" />
+          </div>
+    </script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js"></script>
+    <script src="products-data.js"></script>
+    <script>
+        $(function(){
+            // template for store
+            var sourceStore   = $("#estore-template").html();
+            var templateStore = Handlebars.compile(sourceStore);   
+
+            // template for wishlist
+            var sourceList   = $("#wishlist-template").html();
+            var templateList = Handlebars.compile(sourceList); 
+
+
+
+
+
+
+
+
+            for (var i = 0; i < productsData.productsList.length; i++) {
+              
+              if(productsData.productsList[i].sale){
+                  productsData.productsList[i].sale = productsData.productsList[i].sale.toFixed(2);
+              }
+
+              var context = productsData.productsList[i];
+              var html    = templateStore(context);
+
+              $("#product-container").append(html);
+            }
+
+
+
+
+
+            $(".addProdBtn").on("click", function(){
+                var prodBlock = $(this).closest('.shopItem');
+                var prodTitle = (prodBlock.find('h2').text()).trim();
+
+              
+                for (var i = 0; i < productsData.productsList.length; i++) {
+                  if(productsData.productsList[i].title === prodTitle){
+
+                    var context = productsData.productsList[i];
+                    var html    = templateList(context);
+
+                    $("#wishlist").append(html);
+                  }
+                };
+
+
+            })
+
+
+
+            $("body").on("click", ".remProdBtn", function(){
+                $(this).closest('.wishlistItem').remove();
+            })
+
+
+
+        })
+    </script>
+
+  </body>
+</html>
